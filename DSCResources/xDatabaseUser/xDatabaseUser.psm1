@@ -27,7 +27,7 @@ function Get-TargetResource
         [System.String]
         $UserName,
 
-        [System.String]
+        [System.Management.Automation.PSCredential]
         $Password,
 
         [System.String]
@@ -92,7 +92,7 @@ function Set-TargetResource
         [System.String]
         $UserName,
 
-        [System.String]
+        [System.Management.Automation.PSCredential]
         $Password,
 
         [System.String]
@@ -119,6 +119,11 @@ function Set-TargetResource
         $ConnectionString = Construct-ConnectionString -sqlServer $SqlServer
     }
 
+    if($PSBoundParameters.ContainsKey('Password'))
+    {
+        [string]$Password = $Password.GetNetworkCredential().Password
+    }
+
     $ConnectionString = "$ConnectionString database=$DatabaseName"
 
     if($Ensure -eq "Present")
@@ -126,7 +131,7 @@ function Set-TargetResource
         try
         {
             # Create User if it does not already exist. If no login is supplied create a contianed database user
-            if (!$UserName) 
+            if (!$LoginName) 
             {
                 [string]$SqlQuery = "IF NOT EXISTS(SELECT name FROM sys.database_principals WHERE name='$UserName') BEGIN CREATE USER $UserName WITH PASSWORD = '$Password' END"
             }
@@ -190,7 +195,7 @@ function Test-TargetResource
         [System.String]
         $UserName,
 
-        [System.String]
+        [System.Management.Automation.PSCredential]
         $Password,
 
         [System.String]

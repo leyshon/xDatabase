@@ -5,7 +5,7 @@ class xDatabaseUser : OMI_BaseResource
     [Write, ValueMap{"Present","Absent"}, Values{"Present","Absent"}] String Ensure;
     [Key] String UserName;
     [Write] String DatabaseName;
-    [Write] String Password;
+    [Write, EmbeddedInstance("MSFT_Credential")] String Password;
     [Write] String LoginName;
     [Required, Description("Sql Server Name")] String SqlServer;
     [Write, EmbeddedInstance("MSFT_Credential")] String SqlConnectionCredentials;
