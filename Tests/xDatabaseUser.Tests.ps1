@@ -21,22 +21,36 @@ Describe "Testing xDatabaseUser resource execution" {
     Mock -CommandName ReturnSqlQuery -MockWith {return $QueryResult}
     Mock -CommandName ExecuteSqlQuery -MockWith {return $true}
     
-    $QueryResult = 1
+    
     It "Get-TargetResource should return [Hashtable]" {
+        $QueryResult = 1
         (Get-TargetResource @testParameter).GetType()  -as [String] | Should Be "hashtable"
     }
-    Context "user does not exist" {
-
-        $QueryResult = 0
+    Context "user does not exist" {       
         It "Test-TargetResource should return false" {
+            $QueryResult = 0
             Test-TargetResource @testParameter | Should Be $false
         }
     }
-    Context "user does exist" {
-
-        $QueryResult = 1
+    Context "user does exist" {      
         It "Test-TargetResource should return true" {
+            $QueryResult = 1
             Test-TargetResource @testParameter | Should Be $true
         }
+    }
+    Context "Set-TargetResource with Ensure = Present" {
+        Mock -CommandName ExecuteSqlQuery -MockWith {return $true} -ParameterFilter {$SqlQuery -like "*CREATE USER TestUser*"} -Verifiable 
+        It "should create the user" {
+            Set-TargetResource @testParameter 
+            Assert-VerifiableMocks
+        }
+    }
+    Context "Set-TargetResource with Ensure = Absent" {
+        Mock -CommandName ExecuteSqlQuery -MockWith {return $true} -ParameterFilter {$SqlQuery -like "*DROP USER TestUser*"} -Verifiable
+        $testParameter.Ensure = "Absent"
+        It "should drop the user" {
+            Set-TargetResource @testParameter
+            Assert-VerifiableMocks
+        } 
     }
 }
