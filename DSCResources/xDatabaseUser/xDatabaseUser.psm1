@@ -10,7 +10,7 @@ data LocalizedData
 '@
 }
 
-Import-Module $PSScriptRoot\..\xDatabase_Common
+Import-Module -DisableNameChecking $PSScriptRoot\..\xDatabase_Common
 
 function Get-TargetResource 
 {
@@ -51,7 +51,7 @@ function Get-TargetResource
         $ConnectionString = Construct-ConnectionString -sqlServer $SqlServer -credentials $SqlConnectionCredentials
     }
     else
-    {
+    {   
         $ConnectionString = Construct-ConnectionString -sqlServer $SqlServer
     }
 
