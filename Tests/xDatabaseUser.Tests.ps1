@@ -40,7 +40,7 @@ Describe "Testing xDatabaseUser resource execution" {
     }
     Context "Set-TargetResource with Ensure = Present" {
         Mock -CommandName ExecuteSqlQuery -MockWith {return $true} -ParameterFilter {$SqlQuery -like "*CREATE USER TestUser*"} -Verifiable 
-        It "should create the user" {
+        It "should execute create user sql query" {
             Set-TargetResource @testParameter 
             Assert-VerifiableMocks
         }
@@ -48,7 +48,7 @@ Describe "Testing xDatabaseUser resource execution" {
     Context "Set-TargetResource with Ensure = Absent" {
         Mock -CommandName ExecuteSqlQuery -MockWith {return $true} -ParameterFilter {$SqlQuery -like "*DROP USER TestUser*"} -Verifiable
         $testParameter.Ensure = "Absent"
-        It "should drop the user" {
+        It "should execute drop user sql query" {
             Set-TargetResource @testParameter
             Assert-VerifiableMocks
         } 
